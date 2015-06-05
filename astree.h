@@ -33,6 +33,8 @@ void dump_astree2(FILE* outfile, astree* root);
 void scan (astree* root, SymbolTable* symtab);
 string checker (astree* root, SymbolTable* symtab);
 bool searcher(astree* root, string type, SymbolTable* symtab);
+// functions added to astree. generate oil
+// convert to oil
 void yyprint (FILE* outfile, unsigned short toknum,
               astree* yyvaluep);
 void free_ast (astree* tree);

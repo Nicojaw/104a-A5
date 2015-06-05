@@ -34,7 +34,7 @@ void scan (astree* root, SymbolTable* symtab);
 string checker (astree* root, SymbolTable* symtab);
 bool searcher(astree* root, string type, SymbolTable* symtab);
 // functions added to astree. generate oil
-// convert to oil
+string converter(string type);
 void yyprint (FILE* outfile, unsigned short toknum,
               astree* yyvaluep);
 void free_ast (astree* tree);

@@ -1,6 +1,6 @@
 //Nico Williams and Brandon Rullamas
 //nijowill and brullama
-//Assignment 5 - Code Emission: oc and oil
+//Assignment 4 - Symbols and Type Checking
 
 #include <assert.h>
 #include <inttypes.h>
@@ -393,6 +393,7 @@ string checker(astree* root, SymbolTable* table){
 
 }
 
+
 bool searcher(astree* root, string type, SymbolTable* table){
    if(root == NULL) return true;
    SymbolTable* currtab = table;
@@ -413,6 +414,23 @@ bool searcher(astree* root, string type, SymbolTable* table){
    return true;
 }
 
+
+
+string converter(string type){
+  if(type == "bool" || type == "char") return "ubyte ";
+  if(type == "int") return "int ";
+  if(type == "string" || type == "bool[]" || type == "char[]") return "ubyte *";
+  if(type == "int[]") return "int *";
+  if(type == "string[]") return "ubyte **";
+  if(type == "void") return "void";
+  size_t check = -1;
+  if(type.find("[]") != check) {
+    return "struct " + type + " *";
+  } else {
+    return "struct " + type + " **";
+  }
+}
+  
 void yyprint (FILE* outfile, unsigned short toknum,
               astree* yyvaluep) {
    if (is_defined_token (toknum)) {

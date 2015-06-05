@@ -1,7 +1,3 @@
-//Nico Williams and Brandon Rullamas
-//nijowill and brullama
-//Assignment 5 - Code Emission: oc and oil
-
 #include <fstream>
 #include <unistd.h>
 #include <iostream>
@@ -206,8 +202,10 @@ gnu.org/software/libc/manual/html_node/Example-of-Getopt.html#Example-of-Getopt
       
       oilFile = fopen(asg5.c_str(), "w");
       fprintf(oilFile, "#define __OCLIB_C_\n#include \"oclib.oh\"\n");
-      //code generation command goes here
-      fclose(oilFile);
+      printf("test\n");
+
+      printf("test2\n");
+      close(oilFile);
         
         
       }

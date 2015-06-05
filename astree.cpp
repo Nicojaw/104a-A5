@@ -414,8 +414,6 @@ bool searcher(astree* root, string type, SymbolTable* table){
    return true;
 }
 
-
-
 string converter(string type){
   if(type == "bool" || type == "char") {
     return "ubyte ";
@@ -435,8 +433,8 @@ string converter(string type){
   if(type == "void") {
     return "void";
   }
-  size_t check = -1;
-  if(type.find("[]") != check) {
+  size_t test = -1;
+  if(type.find("[]") != test) {
     return "struct " + type + " *";
   } else {
     return "struct " + type + " **";

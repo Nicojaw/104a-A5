@@ -39,7 +39,8 @@ public:
 
   SymbolTable* lookup2(string name);
 
-
+  //int retnum();//////////////
+  
   string parentFunction(SymbolTable* innerScope);
 
   static int N;

@@ -417,12 +417,24 @@ bool searcher(astree* root, string type, SymbolTable* table){
 
 
 string converter(string type){
-  if(type == "bool" || type == "char") return "ubyte ";
-  if(type == "int") return "int ";
-  if(type == "string" || type == "bool[]" || type == "char[]") return "ubyte *";
-  if(type == "int[]") return "int *";
-  if(type == "string[]") return "ubyte **";
-  if(type == "void") return "void";
+  if(type == "bool" || type == "char") {
+    return "ubyte ";
+  }
+  if(type == "int") {
+    return "int ";
+  }
+  if(type == "string" || type == "bool[]" || type == "char[]") {
+    return "ubyte *";
+  }
+  if(type == "int[]") {
+    return "int *";
+  }
+  if(type == "string[]") {
+    return "ubyte **";
+  }
+  if(type == "void") {
+    return "void";
+  }
   size_t check = -1;
   if(type.find("[]") != check) {
     return "struct " + type + " *";

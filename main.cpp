@@ -198,7 +198,12 @@ gnu.org/software/libc/manual/html_node/Example-of-Getopt.html#Example-of-Getopt
       scan(yyparse_astree, Symbols);
       Symbols->dump(symFile, 0);
       pclose(symFile);
+      checker(yyparse_astree, Symbols);
       
+      oilFile = fopen(asg5.c_str(), "w");
+      fprintf(oilFile, "#define __OCLIB_C_\n#include \"oclib.oh\"\n");
+      //code generation command goes here
+      fclose(oilFile);
         
         
       }

@@ -1,0 +1,2 @@
+#define __OCLIB_C_
+#include "oclib.oh"

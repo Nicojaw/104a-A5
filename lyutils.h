@@ -6,7 +6,7 @@
 #include "astree.h"
 //Nico Williams and Brandon Rullamas
 //nijowill and brullama
-//Assignment 4 - Symbols and Type Checking
+//Assignment 5 - Code Emission: oc and oil
 
 #include "auxlib.h"
 

@@ -1,3 +1,7 @@
+//Nico Williams and Brandon Rullamas
+//nijowill and brullama
+//Assignment 5 - Code Emission: oc and oil
+
 #include <fstream>
 #include <unistd.h>
 #include <iostream>

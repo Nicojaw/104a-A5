@@ -1,6 +1,6 @@
 //Nico Williams and Brandon Rullamas
 //nijowill and brullama
-//Assignment 4 - Symbols and Type Checking
+//Assignment 5 - Code Emission: oc and oil
 
 #ifndef __STRINGSET__
 #define __STRINGSET__

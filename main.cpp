@@ -134,9 +134,11 @@ gnu.org/software/libc/manual/html_node/Example-of-Getopt.html#Example-of-Getopt
     string asg2;
     string asg3;
     string asg4;
+    string asg5;
     FILE * strFile;
     FILE * astFile;
     FILE * symFile;
+    FILE * oilFile;
     set_execname (argv[0]);
     
    for (int argi = optind; argi < argc; ++argi) {
@@ -153,6 +155,7 @@ gnu.org/software/libc/manual/html_node/Example-of-Getopt.html#Example-of-Getopt
       asg2 = base+".tok";
       asg3 = base+".ast";
       asg4 = base+".sym";
+      asg5 = base+".oil";
       strFile = fopen(asg1.c_str(), "w");
       tokoutputfile = fopen(asg2.c_str(), "w");
       

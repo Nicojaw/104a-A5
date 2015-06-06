@@ -74,6 +74,7 @@ int main (int argc, char** argv) {
 	int Dargs = 0;
     yy_flex_debug = 0;
     extern FILE* tokoutputfile;
+    extern FILE* oilFile;
     extern astree* yyparse_astree;
 /*Get options. code based off
 gnu.org/software/libc/manual/html_node/Example-of-Getopt.html#Example-of-Getopt
@@ -138,7 +139,6 @@ gnu.org/software/libc/manual/html_node/Example-of-Getopt.html#Example-of-Getopt
     FILE * strFile;
     FILE * astFile;
     FILE * symFile;
-    FILE * oilFile;
     set_execname (argv[0]);
     
    for (int argi = optind; argi < argc; ++argi) {

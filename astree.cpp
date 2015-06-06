@@ -15,6 +15,11 @@
 #include "symtable.h"
 
 SymbolTable* strSym = new SymbolTable(NULL);
+FILE* oilFile;
+int icount = 1;
+int bcount = 1;
+int pcount = 1;
+int controlcount = 1;
 
 astree* new_astree (int symbol, int filenr, int linenr,
                     int offset, const char* lexinfo) {
@@ -429,14 +434,14 @@ void genCode(astree* root, SymbolTable* table){
             string child2 = get_yytname(root->children[child]->children[2]->symbol);
             string ident = root->children[child]->children[1]->lexinfo->c_str();
             string declt = root->children[child]->children[0]->children[0]->children[0]->lexinfo->c_str();
-            string newtype = type_convert(declt);
+            string newtype = converter(declt);
 			
             if(root->children[child]->children[0]->children.size() == 2){
                declt = declt + "[]";
-               newtype = type_convert(declt);
-               fprintf(oiloutputfile, "%s__%s;\n", newtype.c_str(), ident.c_str());
+               newtype = converter(declt);
+               fprintf(oilFile, "%s__%s;\n", newtype.c_str(), ident.c_str());
             } else {
-               fprintf(oiloutputfile, "%s__%s;\n", newtype.c_str(), ident.c_str());
+               fprintf(oilFile, "%s__%s;\n", newtype.c_str(), ident.c_str());
             }
          }
          if (currsymbol == "struct_") {
@@ -444,7 +449,7 @@ void genCode(astree* root, SymbolTable* table){
 		 }
       }
 
-      fprintf(oiloutputfile, "void __ocmain ()\n{\n");
+      fprintf(oilFile, "void __ocmain ()\n{\n");
 
       for (size_t child = 0; child < root->children.size(); ++child) {
          string currsymbol = get_yytname(root->children[child]->symbol);
@@ -452,20 +457,20 @@ void genCode(astree* root, SymbolTable* table){
 			genCode(root->children[child], table);
 		 }
       }
-      fprintf(oiloutputfile, "}\n");
+      fprintf(oilFile, "}\n");
    }
 
    if (currsym == "vardecl") {
       string ident = root->children[1]->lexinfo->c_str();
-      string dect = type_check(root->children[1], table);
+      string dect = checker(root->children[1], table);
       if (root->children[0]->children.size() == 2) dect = dect + "[]";
-      dect = type_convert(dect);
+      dect = converter(dect);
       string child2 = get_yytname(root->children[2]->symbol);
       if (child2 == "constant") {
-         fprintf(oiloutputfile, "%s_%d_%s = __%s\n", dect.c_str(),table->retnum(), ident.c_str(), root->children[2]->children[0]->lexinfo->c_str());
+         fprintf(oilFile, "%s_%d_%s = __%s\n", dect.c_str(),table->numBack(), ident.c_str(), root->children[2]->children[0]->lexinfo->c_str());
 	  }
-      if (child2 == "variable") }
-         fprintf(oiloutputfile, "%s_%d_%s = _%d_%s\n", dect.c_str(),table->retnum(), ident.c_str(), table->retnum(), root->children[2]->children[0]->lexinfo->c_str());
+      if (child2 == "variable") {
+         fprintf(oilFile, "%s_%d_%s = _%d_%s\n", dect.c_str(),table->numBack(), ident.c_str(), table->numBack(), root->children[2]->children[0]->lexinfo->c_str());
 	  }
    }
 
@@ -477,27 +482,27 @@ void genCode(astree* root, SymbolTable* table){
          string child2 = get_yytname(root->children[2]->symbol);
          if (child0 != "constant" && child0 != "constant") {
             genCode(root->children[0], table);
-            fprintf(oiloutputfile, "i%d = i%d ", counter, counter-1);
+            fprintf(oilFile, "i%d = i%d ", counter, counter-1);
          }
          else if (child2 != "constant" && child2 != "constant") {
             genCode(root->children[2], table);
-            fprintf(oiloutputfile, "i%d = i%d ", counter, counter-1);
+            fprintf(oilFile, "i%d = i%d ", counter, counter-1);
          } else {
-			fprintf(oiloutputfile, "i%d = ", counter);
+			fprintf(oilFile, "i%d = ", counter);
 		 }
 
          if(child0 == "constant") {
-			fprintf(oiloutputfile, "%s ", root->children[0]->children[0]->lexinfo->c_str());
+			fprintf(oilFile, "%s ", root->children[0]->children[0]->lexinfo->c_str());
 		 }
          if(child0 == "variable") {
-			fprintf(oiloutputfile, "_%d_%s ", table->retnum(), root->children[0]->children[0]->lexinfo->c_str());
+			fprintf(oilFile, "_%d_%s ", table->numBack(), root->children[0]->children[0]->lexinfo->c_str());
 		 }
-         fprintf(oiloutputfile, "%s ", root->children[1]->lexinfo->c_str());
+         fprintf(oilFile, "%s ", root->children[1]->lexinfo->c_str());
          if(child2 == "constant") {
-			fprintf(oiloutputfile, "%s;\n", root->children[2]->children[0]->lexinfo->c_str());
+			fprintf(oilFile, "%s;\n", root->children[2]->children[0]->lexinfo->c_str());
 		 }
          if(child2 == "variable") {
-			fprintf(oiloutputfile, "_%d_%s;\n", table->retnum(), root->children[2]->children[0]->lexinfo->c_str());
+			fprintf(oilFile, "_%d_%s;\n", table->numBack(), root->children[2]->children[0]->lexinfo->c_str());
 		 }      
       }
 	  
@@ -507,27 +512,27 @@ void genCode(astree* root, SymbolTable* table){
          string child2 = get_yytname(root->children[2]->symbol);
          if (child0 != "constant" && child0 != "constant") {
             genCode(root->children[0], table);
-            fprintf(oiloutputfile, "b%d = b%d ", counter, counter-1);
+            fprintf(oilFile, "b%d = b%d ", counter, counter-1);
          }
          else if (child2 != "constant" && child2 != "constant") {
             genCode(root->children[2], table);
-            fprintf(oiloutputfile, "b%d = b%d ", counter, counter-1);
+            fprintf(oilFile, "b%d = b%d ", counter, counter-1);
          } else {
-			fprintf(oiloutputfile, "b%d = ", counter);
+			fprintf(oilFile, "b%d = ", counter);
 		 }
 
          if(child0 == "constant") {
-			fprintf(oiloutputfile, "%s ", root->children[0]->children[0]->lexinfo->c_str());
+			fprintf(oilFile, "%s ", root->children[0]->children[0]->lexinfo->c_str());
 		 }
          if(child0 == "variable") {
-			fprintf(oiloutputfile, "_%d_%s ", table->retnum(), root->children[0]->children[0]->lexinfo->c_str());
+			fprintf(oilFile, "_%d_%s ", table->numBack(), root->children[0]->children[0]->lexinfo->c_str());
 		 }
-         fprintf(oiloutputfile, "%s ", root->children[1]->lexinfo->c_str());
+         fprintf(oilFile, "%s ", root->children[1]->lexinfo->c_str());
          if(child2 == "constant") {
-			fprintf(oiloutputfile, "%s;\n", root->children[2]->children[0]->lexinfo->c_str());
+			fprintf(oilFile, "%s;\n", root->children[2]->children[0]->lexinfo->c_str());
 		 }
          if(child2 == "variable") { 
-			fprintf(oiloutputfile, "_%d_%s;\n", table->retnum(), root->children[2]->children[0]->lexinfo->c_str());
+			fprintf(oilFile, "_%d_%s;\n", table->numBack(), root->children[2]->children[0]->lexinfo->c_str());
 		 }
       }
    }
@@ -535,24 +540,24 @@ void genCode(astree* root, SymbolTable* table){
    if (currsym == "while_") {
       int currb = bcount;
       int currcount = controlcount++;
-      fprintf(oiloutputfile, "while_%d:;\n", currcount);
+      fprintf(oilFile, "while_%d:;\n", currcount);
       genCode(root->children[0], table);
-      fprintf(oiloutputfile, "if(!b%d) goto break_%d;\n", currb, currcount);
+      fprintf(oilFile, "if(!b%d) goto break_%d;\n", currb, currcount);
       genCode(root->children[1],table);
-      fprintf(oiloutputfile, "goto while_%d;\n", currcount);
-      fprintf(oiloutputfile, "break_%d:;\n", currcount);
+      fprintf(oilFile, "goto while_%d;\n", currcount);
+      fprintf(oilFile, "break_%d:;\n", currcount);
    }
 
    if (currsym == "if_") {
       int currb = bcount;
       int currcount = controlcount++;
       genCode(root->children[0],table);
-      fprintf(oiloutputfile, "if(!b%d) goto else_%d;\n", currb, currcount);
+      fprintf(oilFile, "if(!b%d) goto else_%d;\n", currb, currcount);
       genCode(root->children[1],table);
-      fprintf(oiloutputfile, "goto fi_%d;\n", currcount);
-      fprintf(oiloutputfile, "else_%d:;\n", currcount);
+      fprintf(oilFile, "goto fi_%d;\n", currcount);
+      fprintf(oilFile, "else_%d:;\n", currcount);
       if(root->children.size() == 3) genCode(root->children[2],table);
-      fprintf(oiloutputfile, "fi_%d:;\n", currcount);
+      fprintf(oilFile, "fi_%d:;\n", currcount);
    }
 
    if (currsym == "block") {
@@ -570,36 +575,36 @@ void genCode(astree* root, SymbolTable* table){
             structname = root->children[child]->lexinfo->c_str();
          }
       }
-      fprintf(oiloutputfile, "struct %s{\n", structname.c_str());
+      fprintf(oilFile, "struct %s{\n", structname.c_str());
 
       for (size_t child = 0; child < root->children.size(); ++child) {
          string currchild = get_yytname(root->children[child]->symbol);
          if (currchild == "decl") {
             string ident = root->children[child]->children[1]->lexinfo->c_str();
             string declt = root->children[child]->children[0]->children[0]->children[0]->lexinfo->c_str();
-            string newtype = type_convert(declt);
+            string newtype = converter(declt);
             if (root->children[child]->children[0]->children.size() == 2) {
                declt = declt + "[]";
-               newtype = type_convert(declt);
-               fprintf(oiloutputfile, "        %s%s;\n", newtype.c_str(), ident.c_str());
+               newtype = converter(declt);
+               fprintf(oilFile, "        %s%s;\n", newtype.c_str(), ident.c_str());
             } else {
-               fprintf(oiloutputfile, "        %s%s;\n", newtype.c_str(), ident.c_str());
+               fprintf(oilFile, "        %s%s;\n", newtype.c_str(), ident.c_str());
             }
          }
       }
-      fprintf(oiloutputfile, "};\n");
+      fprintf(oilFile, "};\n");
    }
 
    if (currsym == "decl") {
       string ident = root->children[1]->lexinfo->c_str();
       string declt = root->children[0]->children[0]->children[0]->lexinfo->c_str();
-      string newtype = type_convert(declt);
+      string newtype = converter(declt);
       if (root->children[0]->children.size() == 2) {
          declt = declt + "[]";
-         newtype = type_convert(declt);
-         fprintf(oiloutputfile, "%s__%s;\n", newtype.c_str(), ident.c_str());
+         newtype = converter(declt);
+         fprintf(oilFile, "%s__%s;\n", newtype.c_str(), ident.c_str());
       } else {
-         fprintf(oiloutputfile, "%s__%s;\n", newtype.c_str(), ident.c_str());
+         fprintf(oilFile, "%s__%s;\n", newtype.c_str(), ident.c_str());
       }
    }
 
@@ -612,7 +617,7 @@ void genCode(astree* root, SymbolTable* table){
          string currchild = get_yytname(root->children[child]->symbol);
          if (currchild == "TOK_IDENT") {
             funcname = root->children[child]->lexinfo->c_str();
-            rettype = type_check(root->children[child], table);
+            rettype = checker(root->children[child], table);
             int firstparen = rettype.find_first_of('(',0);
             rettype = rettype.substr(0,firstparen);
          }
@@ -622,25 +627,25 @@ void genCode(astree* root, SymbolTable* table){
             if (blockroot->children.size() == 0) return;
          }
       }
-      fprintf(oiloutputfile, "%s\n__%s(", type_convert(rettype).c_str(), funcname.c_str());
+      fprintf(oilFile, "%s\n__%s(", converter(rettype).c_str(), funcname.c_str());
 
       for (size_t child = 0; child < root->children.size(); ++child) {
          int counter = 0;
          string currchild = get_yytname(root->children[child]->symbol);
          if (currchild == "decl") {
             string ident = root->children[child]->children[1]->lexinfo->c_str();
-            string dectype = type_check(root->children[child]->children[1], currblock);
+            string dectype = checker(root->children[child]->children[1], currblock);
             if (root->children[child]->children[0]->children.size() == 2) {
 				dectype = dectype + "[]";
 			}
-            dectype = type_convert(dectype);
+            dectype = converter(dectype);
             if (counter != 0) {
-				fprintf(oiloutputfile, ",");
+				fprintf(oilFile, ",");
 			}
-            fprintf(oiloutputfile, "\n   %s_%d_%s", dectype.c_str(), currblock->retnum(), ident.c_str());
+            fprintf(oilFile, "\n   %s_%d_%s", dectype.c_str(), currblock->numBack(), ident.c_str());
          }
       }
-      fprintf(oiloutputfile, ")\n");
+      fprintf(oilFile, ")\n");
       genCode(blockroot, table);
    }
 }

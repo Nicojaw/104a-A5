@@ -203,9 +203,9 @@ gnu.org/software/libc/manual/html_node/Example-of-Getopt.html#Example-of-Getopt
       oilFile = fopen(asg5.c_str(), "w");
       fprintf(oilFile, "#define __OCLIB_C_\n#include \"oclib.oh\"\n");
       printf("test\n");
-
+      genCode(yyparse_astree, Symbols);
       printf("test2\n");
-      close(oilFile);
+      pclose(oilFile);
         
         
       }

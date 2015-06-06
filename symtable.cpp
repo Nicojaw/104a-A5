@@ -106,9 +106,9 @@ SymbolTable* SymbolTable::lookup2(string name){
    }
 }
 
-/*int SymbolTable::retnum(){/////////////////////
+int SymbolTable::numBack(){
    return this->number;
-}*/
+}
 
 string SymbolTable::parentFunction(SymbolTable* innerScope) {
     std::map<string,SymbolTable*>::iterator it;
